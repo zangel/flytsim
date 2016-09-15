@@ -25,4 +25,4 @@ add_executable(flytsim_srv
 )
 
 target_link_libraries(flytsim_srv ${catkin_LIBRARIES} ${Boost_LIBRARIES})
-
+install(TARGETS flytsim_srv DESTINATION flytsim_srv)
