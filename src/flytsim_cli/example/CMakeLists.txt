@@ -53,4 +53,4 @@ target_link_libraries(example
 	opengl32
 )
 
-install(TARGETS example DESTINATION bin)
+install(TARGETS example DESTINATION bin/windows/example)
