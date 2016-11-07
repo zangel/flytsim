@@ -163,8 +163,8 @@ void DroneView::onConnectDisconnect()
   }
   else
   {
-    m_Connection->connect(m_ServerAddressLineEdit->text().toStdString());
-    m_ImageTimer->start();
+    if(!m_Connection->connect(m_ServerAddressLineEdit->text().toStdString()))
+      m_ImageTimer->start();
   }
 
   updateUI();

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1129</width>
-    <height>487</height>
+    <width>928</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -18,16 +18,16 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="leftMargin">
-    <number>0</number>
+    <number>3</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>3</number>
    </property>
    <property name="rightMargin">
-    <number>0</number>
+    <number>3</number>
    </property>
    <property name="bottomMargin">
-    <number>0</number>
+    <number>3</number>
    </property>
    <item>
     <widget class="cli::example::CameraView" name="m_CameraView">
@@ -61,6 +61,12 @@
        </item>
        <item row="0" column="1" colspan="2">
         <widget class="QLineEdit" name="m_ServerAddressLineEdit">
+         <property name="minimumSize">
+          <size>
+           <width>120</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="text">
           <string>192.168.204.136</string>
          </property>
@@ -122,6 +128,9 @@
         <widget class="QCheckBox" name="m_LandAsyncronouslyCheckBox">
          <property name="text">
           <string>Asynchronously</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
