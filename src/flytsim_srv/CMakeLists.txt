@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(flytsim_srv)
 
 find_package(catkin REQUIRED COMPONENTS roslib roscpp rosconsole image_transport)
-find_package(Boost COMPONENTS system filesystem thread coroutine context REQUIRED)
+find_package(Boost COMPONENTS system filesystem thread coroutine context log log_setup program_options REQUIRED)
 
 set(FLYTSIM_CORE_INCLUDE_DIR "/flyt/flytos/flytcore/include" CACHE PATH "Path to FlytSim core include dirs")
 

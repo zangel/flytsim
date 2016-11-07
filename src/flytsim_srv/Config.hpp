@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <memory>
 
+#define BOOST_LOG_DYN_LINK 1
 #include <boost/atomic.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/spawn.hpp>
@@ -21,6 +22,7 @@
 #include <boost/variant.hpp>
 #include <boost/array.hpp>
 #include <boost/optional.hpp>
+#include <boost/log/trivial.hpp>
 
 #include <ros/ros.h>
 #include <image_transport/image_transport.h>
@@ -34,6 +36,7 @@ namespace srv
 	template <typename T> using atomic = boost::atomic<T>;
 	template <typename T> using optional = boost::optional<T>;
 	using boost::system::errc::make_error_code;
+	namespace log = boost::log;
 }
 
 #endif //CONFIG_HPP

@@ -3,6 +3,8 @@
 
 #include "Config.hpp"
 
+#define SERVER_LOG(level) BOOST_LOG_TRIVIAL(level) << "[SERVER] "
+
 namespace srv {
 
 class Connection;
@@ -16,11 +18,15 @@ public:
 	virtual ~Server();
 
 	static std::uint16_t const DEFAULT_LISTEN_PORT = 12321;
+	static constexpr char const * DEFAULT_ROS_MASTER_URI = "http://localhost:11311";
 
 	static Server& instance();
 
 	std::uint16_t getPort() const;
 	system::error_code setPort(std::uint16_t port);
+
+	std::string getROSMasterUri() const;
+	system::error_code setROSMasterUri(std::string uri);
 
 	std::shared_ptr<ros::NodeHandle> getROSHandle() const;
 	sensor_msgs::ImageConstPtr getROSImage() const;

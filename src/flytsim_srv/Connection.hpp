@@ -4,6 +4,8 @@
 #include "Config.hpp"
 #include "Commands.hpp"
 
+#define CONN_LOG(level) BOOST_LOG_TRIVIAL(level) << "[CONN] "
+
 namespace srv {
 
 class Connection

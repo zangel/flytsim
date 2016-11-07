@@ -44,11 +44,16 @@ void Connection::processCommands(asio::yield_context yctx)
 {
 	m_ProcessCommandsYieldContext = &yctx;
 
+	CONN_LOG(debug) << "processing commands ...";
+
 	while(true)
 	{
 		std::string line;
-		if(readLine(line))
+		if(system::error_code rle = readLine(line))
+		{
+			CONN_LOG(error) << "failed to read a line: " << rle;
 			break;
+		}
 
 		system::error_code result;
 		std::ostringstream data;
@@ -57,6 +62,7 @@ void Connection::processCommands(asio::yield_context yctx)
 		if(system::error_code pe = cmd::parse(line, command))
 		{
 			result = pe;
+			CONN_LOG(error) << "failed to parse a command: " << pe;
 		}
 		else
 		{
@@ -93,6 +99,9 @@ void Connection::processCommands(asio::yield_context yctx)
 			case 7:
 				result = handleGetImage(boost::get<cmd::GetImage>(command), data);
 				break;
+
+			default:
+				CONN_LOG(error) << "unknown command received: " << command.which();
 			}
 		}
 
@@ -103,34 +112,45 @@ void Connection::processCommands(asio::yield_context yctx)
 
 	m_ProcessCommandsYieldContext = nullptr;
 
+	CONN_LOG(debug) << "processing commands done!";
+
 }
 
 system::error_code Connection::handleArm(cmd::Arm const &arm, std::ostream &dos)
 {
+	CONN_LOG(debug) << "received: arm()";
 	ros::ServiceClient client = Server::instance().getROSHandle()
 		->serviceClient<core_api::Arm>("/flytsim/navigation/arm");
 
 	core_api::Arm armCall;
 	if(!client.call(armCall))
+	{
+		CONN_LOG(error) << "arm() failed!";
 		return make_error_code(system::errc::io_error);
+	}
 
 	return system::error_code();
 }
 
 system::error_code Connection::handleDisarm(cmd::Disarm const &disarm, std::ostream &dos)
 {
+	CONN_LOG(debug) << "received: disarm()";
 	ros::ServiceClient client = Server::instance().getROSHandle()
 		->serviceClient<core_api::Disarm>("/flytsim/navigation/disarm");
 
 	core_api::Disarm disarmCall;
 	if(!client.call(disarmCall))
+	{
+		CONN_LOG(error) << "disarm() failed!";
 		return make_error_code(system::errc::io_error);
+	}
 
 	return system::error_code();
 }
 
 system::error_code Connection::handleTakeOff(cmd::TakeOff const &takeOff, std::ostream &dos)
 {
+	CONN_LOG(debug) << "received: take_off(" << takeOff.altitude << ")";
 	ros::ServiceClient client = Server::instance().getROSHandle()
 		->serviceClient<core_api::TakeOff>("/flytsim/navigation/take_off");
 
@@ -138,13 +158,17 @@ system::error_code Connection::handleTakeOff(cmd::TakeOff const &takeOff, std::o
 	takeOffCall.request.takeoff_alt = takeOff.altitude;
 
 	if(!client.call(takeOffCall))
+	{
+		CONN_LOG(error) << "take_off() failed!";
 		return make_error_code(system::errc::io_error);
+	}
 
 	return system::error_code();
 }
 
 system::error_code Connection::handleLand(cmd::Land const &land, std::ostream &dos)
 {
+	CONN_LOG(debug) << "received: land()";
 	ros::ServiceClient client = Server::instance().getROSHandle()
 		->serviceClient<core_api::Land>("/flytsim/navigation/land");
 
@@ -154,13 +178,17 @@ system::error_code Connection::handleLand(cmd::Land const &land, std::ostream &d
 		landCall.request.async = land.common.async.get()?1:0;
 
 	if(!client.call(landCall))
+	{
+		CONN_LOG(error) << "land() failed!";
 		return make_error_code(system::errc::io_error);
+	}
 
 	return system::error_code();
 }
 
 system::error_code Connection::handlePositionSetpoint(cmd::PositionSetpoint const &positionSetpoint, std::ostream &dos)
 {
+	CONN_LOG(debug) << "received: position_setpoint()";
 	ros::ServiceClient client = Server::instance().getROSHandle()
 		->serviceClient<core_api::VelocitySet>("/flytsim/navigation/position_set");
 
@@ -177,13 +205,17 @@ system::error_code Connection::handlePositionSetpoint(cmd::PositionSetpoint cons
 	positionSetCall.request.async = 1;
 
 	if(!client.call(positionSetCall))
+	{
+		CONN_LOG(error) << "position_setpoint() failed!";
 		return make_error_code(system::errc::io_error);
+	}
 
 	return system::error_code();
 }
 
 system::error_code Connection::handleVelocitySetpoint(cmd::VelocitySetpoint const &velocitySetpoint, std::ostream &dos)
 {
+	CONN_LOG(debug) << "received: velocity_setpoint()";
 	ros::ServiceClient client = Server::instance().getROSHandle()
 		->serviceClient<core_api::VelocitySet>("/flytsim/navigation/velocity_set");
 
@@ -202,13 +234,17 @@ system::error_code Connection::handleVelocitySetpoint(cmd::VelocitySetpoint cons
 	velocitySetCall.request.async = 1;
 
 	if(!client.call(velocitySetCall))
+	{
+		CONN_LOG(error) << "velocity_setpoint() failed!";
 		return make_error_code(system::errc::io_error);
+	}
 
 	return system::error_code();
 }
 
 system::error_code Connection::handleAttitudeSetpoint(cmd::AttitudeSetpoint const &attitudeSetpoint, std::ostream &dos)
 {
+	CONN_LOG(debug) << "received: attitude_setpoint()";
 	ros::ServiceClient client = Server::instance().getROSHandle()
 		->serviceClient<core_api::AttitudeSet>("/flytsim/navigation/attitude_set");
 
@@ -220,16 +256,23 @@ system::error_code Connection::handleAttitudeSetpoint(cmd::AttitudeSetpoint cons
 	attitudeSetCall.request.thrust = attitudeSetpoint.thrust;
 
 	if(!client.call(attitudeSetCall))
+	{
+		CONN_LOG(error) << "attitude_setpoint() failed!";
 		return make_error_code(system::errc::io_error);
+	}
 
 	return system::error_code();
 }
 
 system::error_code Connection::handleGetImage(cmd::GetImage const &getImage, std::ostream &dos)
 {
+	CONN_LOG(debug) << "received: get_image()";
 	sensor_msgs::ImageConstPtr img = Server::instance().getROSImage();
 	if(!img)
+	{
+		CONN_LOG(error) << "get_image() failed!";
 		return make_error_code(system::errc::no_stream_resources);
+	}
 
 	dos <<
 		"width:" << img->width << " height:" << img->height << " size:" << img->data.size() << " data:";
